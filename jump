@@ -1,0 +1,89 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Player : MonoBehaviour
+{
+    public Animator animator;
+    public Rigidbody2D rb;
+    public float jumpAmount;
+    public float gravityScale = 10;
+    public float fallingGravityScale = 40;
+    public float distanceToCheck = 0.5f;
+    public bool isGrounded;
+    public float offset = 0.1f;
+    public Vector2 surfacePosition;
+    ContactFilter2D filter;
+    Collider2D[] results = new Collider2D[1];
+
+    float velocity;
+    public float gravity = -9.81f;
+
+    
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        animator.SetBool("Horizontal", Input.GetAxis("Horizontal") != 0 );
+        
+
+        transform.Translate(Input.GetAxis("Horizontal")* 15f * Time.deltaTime, 0f, 0f);
+
+        Vector3 characterScale = transform.localScale;
+
+        if(Input.GetAxis("Horizontal") < 0){
+
+            characterScale.x = -2.384207f;
+        }
+
+        if(Input.GetAxis("Horizontal") > 0){
+            
+            characterScale.x = 2.384207f;
+        }
+
+        transform.localScale = characterScale;
+
+        //jump
+        Vector2 point = transform.position + Vector3.down * offset;
+        Vector2 size = new Vector2(transform.localScale.x, transform.localScale.y);
+        if (Physics2D.OverlapBox(point, size, 0, filter.NoFilter(), results) > 0)
+        {
+            isGrounded = true;
+            surfacePosition = Physics2D.ClosestPoint(transform.position, results[0]);
+        }
+        else {
+            isGrounded = false;
+        }
+
+
+
+
+        velocity += gravity * gravityScale * Time.deltaTime;
+        if (isGrounded && velocity < 0)
+        {
+            float floorHeight = 0f;
+            velocity = 0;
+            transform.position = new Vector3(transform.position.x, surfacePosition.y + floorHeight, transform.position.z);
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            velocity = jumpAmount;
+        }
+         
+         transform.Translate(new Vector3(0, velocity, 0) * Time.deltaTime);
+
+        if (rb.velocity.y >= 0){
+
+            rb.gravityScale = gravityScale;
+
+        }
+        else if(rb.velocity.y < 0)
+        {
+            rb.gravityScale = fallingGravityScale;
+        }
+
+
+    }
+
+}
