@@ -1,0 +1,50 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerCombat : MonoBehaviour
+{
+
+    public Animator animator;
+
+    public Transform attackPoint;
+    public float attackRange = 0.5f;
+    public LayerMask enemyLayers;
+
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+
+        if(Input.GetKeyDown(KeyCode.Z)){
+
+            Attack1();}
+        if (Input.GetKeyDown(KeyCode.X)){
+
+            Attack2();}
+        if (Input.GetKeyDown(KeyCode.C)){
+            Attack3();}
+    }
+
+    void Attack1(){
+
+        animator.SetTrigger("Attack1");
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange,enemyLayers);
+
+        foreach(Collider2D enemy in hitEnemies){
+
+            Debug.Log("WE hit"+ enemy.name);
+        }
+
+    }
+    void Attack2(){
+
+        animator.SetTrigger("Attack2");
+
+    }
+    void Attack3(){
+
+        animator.SetTrigger("Attack3");
+
+    }
+}
